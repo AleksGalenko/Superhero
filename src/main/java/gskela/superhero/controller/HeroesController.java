@@ -12,7 +12,9 @@ import gskela.superhero.dto.Hero;
 import gskela.superhero.dto.Organization;
 import gskela.superhero.dto.Sighting;
 import gskela.superhero.dto.Superpower;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,10 +25,14 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 /**
  *
@@ -55,13 +61,11 @@ public class HeroesController {
         List<Superpower> superpowers = superpowerDao.getAllSuperpowers();
         model.addAttribute("heroes", heroes);
         model.addAttribute("superpowers", superpowers);
-//        model.addAttribute("errors", violations);
         return "heroes";
     }
 
     @PostMapping("addHero")
-    public String addHero(HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        Hero hero = new Hero();
+    public String addHero(HttpServletRequest request, @ModelAttribute("hero") Hero hero, BindingResult result, RedirectAttributes redirectAttributes, @RequestParam("heroImage") MultipartFile file) {
         hero.setHeroName(request.getParameter("heroName"));
         hero.setHeroDescription(request.getParameter("heroDescription"));
         hero.setVillain(Boolean.valueOf(request.getParameter("villain")));
@@ -73,8 +77,17 @@ public class HeroesController {
             }
         }
         hero.setSuperpowers(superpowers);
-
-      Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
+        if (file != null && !file.isEmpty()) {
+            try {
+                hero.setHeroImage(file.getBytes());
+            } catch (IOException ex) {
+                FieldError error = new FieldError("hero", "heroImage", ex.getMessage());
+                result.addError(error);
+            }
+        } else {
+            hero.setHeroImage(null);
+        }
+        Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
         violations = validate.validate(hero);
 
         if (violations.isEmpty()) {
@@ -97,7 +110,13 @@ public class HeroesController {
     public String heroDetails(HttpServletRequest request, Model model) {
         int id = Integer.parseInt(request.getParameter("id"));
         Hero hero = heroDao.getHeroById(id);
+        byte[] heroImage = hero.getHeroImage();
+        String heroImageData = null;
+        if (heroImage != null) {
+            heroImageData = Base64.getMimeEncoder().encodeToString(heroImage);
+        }
         model.addAttribute("hero", hero);
+        model.addAttribute("heroImage", heroImageData);
         List<Superpower> superpowers = hero.getSuperpowers();
         model.addAttribute("superpowers", superpowers);
         List<Organization> organizations = orgDao.getOrganizationsByHero(hero);
@@ -111,7 +130,13 @@ public class HeroesController {
     public String heroDetails_1(HttpServletRequest request, Model model) {
         int id = Integer.parseInt(request.getParameter("id"));
         Hero hero = heroDao.getHeroById(id);
+        byte[] heroImage = hero.getHeroImage();
+        String heroImageData = null;
+        if (heroImage != null) {
+            heroImageData = Base64.getMimeEncoder().encodeToString(heroImage);
+        }
         model.addAttribute("hero", hero);
+        model.addAttribute("heroImage", heroImageData);
         List<Superpower> superpowers = hero.getSuperpowers();
         model.addAttribute("superpowers", superpowers);
         List<Organization> organizations = orgDao.getOrganizationsByHero(hero);
@@ -125,16 +150,25 @@ public class HeroesController {
     public String editHero(HttpServletRequest request, Model model) {
         int id = Integer.parseInt(request.getParameter("id"));
         Hero hero = heroDao.getHeroById(id);
-        model.addAttribute("hero", hero);
+
         List<Superpower> superpowers = superpowerDao.getAllSuperpowers();
         model.addAttribute("superpowers", superpowers);
+
+        byte[] heroImage = hero.getHeroImage();
+        String heroImageData = null;
+        if (heroImage != null) {
+            heroImageData = Base64.getMimeEncoder().encodeToString(heroImage);
+        }
+        model.addAttribute("hero", hero);
+        model.addAttribute("heroImage", heroImageData);
+
         return "heroes/editHero";
     }
 
     @PostMapping("heroes/editHero")
-    public String performEditHero(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String performEditHero(HttpServletRequest request, @ModelAttribute("hero") Hero hero, BindingResult result, RedirectAttributes redirectAttributes, @RequestParam(value = "heroImage", required = false) MultipartFile file) {
         int id = Integer.parseInt(request.getParameter("id"));
-        Hero hero = heroDao.getHeroById(id);
+        hero = heroDao.getHeroById(id);
         String[] formDataArray = request.getParameterValues("superpower");
         List<Superpower> superpowers = new ArrayList<>();
         if (formDataArray != null) {
@@ -146,13 +180,24 @@ public class HeroesController {
         hero.setHeroDescription(request.getParameter("heroDescription"));
         hero.setVillain(Boolean.valueOf(request.getParameter("villain")));
         hero.setSuperpowers(superpowers);
-        
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                hero.setHeroImage(file.getBytes());
+            } catch (IOException ex) {
+                FieldError error = new FieldError("hero", "heroImage", ex.getMessage());
+                result.addError(error);
+            }
+        } else {
+            hero.setHeroImage(hero.getHeroImage());
+        }
+
         Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
         violations = validate.validate(hero);
 
         if (violations.isEmpty()) {
             heroDao.updateHero(hero);
-        }else {
+        } else {
             redirectAttributes.addFlashAttribute("errors", violations);
             return "redirect:/heroes/editHero?id=" + hero.getHeroID();
         }

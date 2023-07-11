@@ -1,6 +1,6 @@
-gskela/superhero/dao/HeroDaoDBTest.class
-gskela/superhero/dao/SightingDaoDBTest.class
-gskela/superhero/SuperheroApplicationTests.class
-gskela/superhero/dao/OrganizationDaoDBTest.class
-gskela/superhero/dao/LocationDaoDBTest.class
-gskela/superhero/dao/SuperpowerDaoDBTest.class
+gskela\superhero\dao\HeroDaoDBTest.class
+gskela\superhero\dao\SightingDaoDBTest.class
+gskela\superhero\SuperheroApplicationTests.class
+gskela\superhero\dao\LocationDaoDBTest.class
+gskela\superhero\dao\SuperpowerDaoDBTest.class
+gskela\superhero\dao\OrganizationDaoDBTest.class

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: gskela.superhero.dao.SightingDaoDBTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.166 s - in gskela.superhero.dao.SightingDaoDBTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.455 s - in gskela.superhero.dao.SightingDaoDBTest

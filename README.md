@@ -20,6 +20,17 @@ This Superhero Sightings Web Application is a comprehensive solution developed t
 - Wireframes depicting all web application pages, with appropriate annotations for endpoints and parameters.
 - Spring Boot Web Application implementation following MVC patterns, emphasizing dependency injection.
 
+## Update (10-07-2023) - Image Support
+
+Now, in addition to managing superhero information, you can also add an image for each superhero. The images will be stored in the MySQL database along with other superhero data.
+
+To add an image for a superhero:
+- When creating or editing a superhero, you can select an image file to upload.
+- The uploaded image will be associated with the respective superhero and stored in the database.
+- The image will be displayed alongside the superhero details in the application.
+
+Please make sure to have the necessary database and application configurations set up as mentioned in the previous sections.
+
 ## Instructions to Run the App
 
 ### Prerequisites

@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="col-7 text-center m-3">
-                    <form action="addHero" method="POST" enctype="multipart/from-data">
+                    <form action="addHero" method="POST" enctype="multipart/form-data">
 
                         <div class="form-group row">
                             <label for="heroName" class="col-3 col-form-label text-left">Hero Name</label>
@@ -66,7 +66,17 @@
                         <div class="form-group row">
                             <label for="heroDescription" class="col-3 col-form-label text-left">Description</label>
                             <div class="col-9">
-                                <textarea type="textarea" name="heroDescription"id="heroDescription" class="form-control"></textarea>
+                                <textarea name="heroDescription" id="heroDescription" class="form-control"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="heroImage" class="col-3 col-form-label text-left">Image</label>
+                            <div class="col-9">
+                                <div class="input-group">
+                                    <input type="file" name="heroImage" id="heroImage" class="form-control-file" accept="image/*" onchange="updateClearLink()"/>
+                                    <a href="#" onclick="clearFileInput()" id="clearFileLink" class="clear-file-link" style="display: none;">Clear selection</a>
+                                </div>
                             </div>
                         </div>
 
@@ -82,6 +92,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-12 m-0 text-center" 
                              th:if="${errors != null and !errors.isEmpty()}" >
                             <p class="alert alert-danger"th:each="error : ${errors}" 
@@ -91,7 +102,6 @@
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="col-5 btn btn-primary btn-lg">Add Hero</button>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -127,6 +137,24 @@
             </div>
         </div> 
 
+        <script>
+            function updateClearLink() {
+                var fileInput = document.getElementById("heroImage");
+                var clearLink = document.getElementById("clearFileLink");
+
+                if (fileInput.value) {
+                    clearLink.style.display = "inline"; // Show the link if a file is chosen
+                } else {
+                    clearLink.style.display = "none"; // Hide the link if no file is chosen
+                }
+            }
+
+            function clearFileInput() {
+                var fileInput = document.getElementById("heroImage");
+                fileInput.value = ""; // Clear the file input value
+                updateClearLink(); // Update the visibility of the "Clear selection" link
+            }
+        </script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
